@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study locker</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #eef6fc;
+    --card: #f9fcff;
+    --ink: #142530;
+    --ink-soft: #52697c;
+    --accent: #17598a;
+    --error: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+  }
+  main { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+  h1 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+  .lede { color: var(--ink-soft); margin: 0 0 1.5rem; }
+  label { display: block; font-weight: 600; margin: 1.5rem 0 0.4rem; }
+  .help { font-size: 0.88rem; color: var(--ink-soft); margin: 0.35rem 0 0; }
+  textarea, input[type="password"] {
+    width: 100%;
+    font: inherit;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--ink-soft);
+    border-radius: 14px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  textarea { min-height: 240px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; }
+  #output { min-height: 120px; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 0.7rem 1.3rem;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #ffffff;
+    cursor: pointer;
+    margin-top: 1.4rem;
+  }
+  button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.6; cursor: progress; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .status { min-height: 1.5em; margin: 0.8rem 0 0; font-size: 0.92rem; }
+  .status.error { color: var(--error); }
+  ol { padding-left: 1.2rem; margin: 0.4rem 0 0; }
+  code { font-size: 0.85em; background: var(--card); padding: 0.1rem 0.35rem; border-radius: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Case study locker</h1>
+  <p class="lede">
+    Encrypts your "Digitizing forms" case study so it can sit safely in your public
+    GitHub repo. Everything happens in this browser tab; nothing is uploaded anywhere.
+  </p>
+
+  <label for="content">Case study content</label>
+  <textarea id="content" aria-describedby="contentHelp"><h3>Overview</h3>
+<p>Who it was for, which forms you digitized, and your role.</p>
+
+<h3>The problem</h3>
+<p>What was slow, error-prone or frustrating about the paper process.</p>
+
+<h3>What I did</h3>
+<p>Your research, key design decisions, and how the new flow works.</p>
+
+<h3>Outcome</h3>
+<p>What changed after launch.</p></textarea>
+  <p class="help" id="contentHelp">Use &lt;h3&gt; for headings and &lt;p&gt; for paragraphs.</p>
+
+  <label for="images">Add screenshots (optional)</label>
+  <input type="file" id="images" accept="image/*" multiple aria-describedby="imagesHelp">
+  <p class="help" id="imagesHelp">
+    Screenshots get embedded inside the encrypted content, at the end of the text above.
+    Move each &lt;img&gt; line where you want it and edit its alt text. Don't add private
+    screenshots to your repo as normal image files, because anyone can see those.
+  </p>
+
+  <label for="pw">Password</label>
+  <input type="password" id="pw" autocomplete="new-password" aria-describedby="pwHelp">
+  <p class="help" id="pwHelp">Use at least 12 characters. Short or common passwords can be guessed.</p>
+
+  <label for="pw2">Confirm password</label>
+  <input type="password" id="pw2" autocomplete="new-password">
+
+  <button type="button" id="encrypt">Encrypt</button>
+  <p class="status" id="status" aria-live="polite"></p>
+
+  <label for="output">Encrypted result</label>
+  <textarea id="output" readonly aria-describedby="outputHelp"></textarea>
+  <div class="help" id="outputHelp">
+    <ol>
+      <li>Copy the result.</li>
+      <li>Open index.html and find <code>&lt;script type="application/json" id="locked-forms"&gt;</code>.</li>
+      <li>Replace everything between that tag and its closing <code>&lt;/script&gt;</code> with the result.</li>
+    </ol>
+  </div>
+  <button type="button" class="secondary" id="copy">Copy result</button>
+</main>
+
+<script>
+  const ITER = 250000;
+  const content = document.getElementById('content');
+  const pw = document.getElementById('pw');
+  const pw2 = document.getElementById('pw2');
+  const output = document.getElementById('output');
+  const status = document.getElementById('status');
+  const encryptBtn = document.getElementById('encrypt');
+
+  function say(message, isError) {
+    status.textContent = message;
+    status.classList.toggle('error', Boolean(isError));
+  }
+
+  function toB64(bytes) {
+    let s = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      s += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(s);
+  }
+
+  async function encrypt(text, password) {
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: ITER, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt']
+    );
+    const data = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text)));
+    return JSON.stringify({ v: 1, iter: ITER, salt: toB64(salt), iv: toB64(iv), data: toB64(data) });
+  }
+
+  document.getElementById('images').addEventListener('change', (event) => {
+    const files = Array.from(event.target.files);
+    let done = 0;
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        content.value += '\n\n<img src="' + reader.result + '" alt="Describe this screenshot">';
+        done += 1;
+        if (done === files.length) {
+          say('Added ' + files.length + ' screenshot' + (files.length === 1 ? '' : 's') + ' to the end of the content. Edit the alt text for each.');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    event.target.value = '';
+  });
+
+  encryptBtn.addEventListener('click', async () => {
+    if (!window.crypto || !crypto.subtle) {
+      say("This browser can't encrypt. Try an up-to-date Chrome, Safari, Firefox or Edge.", true);
+      return;
+    }
+    if (!content.value.trim()) { say('Add some case study content first.', true); content.focus(); return; }
+    if (pw.value.length < 12) { say('Use a password with at least 12 characters.', true); pw.focus(); return; }
+    if (pw.value !== pw2.value) { say("The passwords don't match.", true); pw2.focus(); return; }
+
+    encryptBtn.disabled = true;
+    say('Encrypting…');
+    try {
+      output.value = await encrypt(content.value, pw.value);
+      say('Encrypted. Copy the result into index.html.');
+    } catch (err) {
+      say('Something went wrong while encrypting. Try again.', true);
+    } finally {
+      encryptBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('copy').addEventListener('click', async () => {
+    if (!output.value) { say('Encrypt first, then copy.', true); return; }
+    try {
+      await navigator.clipboard.writeText(output.value);
+      say('Copied.');
+    } catch (err) {
+      output.select();
+      document.execCommand('copy');
+      say('Copied.');
+    }
+  });
+</script>
+</body>
+</html>

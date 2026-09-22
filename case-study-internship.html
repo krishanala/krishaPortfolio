@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reduced Support Queries by 40% — Krisha</title>
+<meta name="description" content="Case study: redesigning navigation for an audio-visual tech brand, reducing support queries by 40%.">
+
+<script>
+  (function () {
+    var theme = null;
+    try { theme = localStorage.getItem('theme'); } catch (e) {}
+    if (theme !== 'dark' && theme !== 'light') {
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Public+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    color-scheme: light;
+    --paper: #eef6fc;
+    --card: #f9fcff;
+    --ink: #142530;
+    --ink-soft: #52697c;
+    --clay: #2f8fd1;
+    --accent-text: #17598a;
+    --on-accent: #ffffff;
+    --line: #cfe3f0;
+    --nook-1: #dcefff;
+    --nook-2: #bfdff5;
+    --shadow-rgb: 20, 60, 90;
+    --max: 720px;
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0f1a24;
+    --card: #152331;
+    --ink: #eaf3fa;
+    --ink-soft: #93aabd;
+    --clay: #5fb0e8;
+    --accent-text: #5fb0e8;
+    --on-accent: #0f1a24;
+    --line: #22394c;
+    --nook-1: #1c2f40;
+    --nook-2: #142230;
+    --shadow-rgb: 0, 0, 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a { color: inherit; }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.5rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .back-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .theme-toggle {
+    position: relative;
+    flex-shrink: 0;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: var(--ink-soft);
+    padding: 3px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+
+  .theme-toggle[aria-checked="true"] {
+    background: var(--accent-text);
+  }
+
+  .toggle-thumb {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.25s ease;
+  }
+
+  .theme-toggle[aria-checked="true"] .toggle-thumb {
+    transform: translateX(20px);
+  }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  .eyebrow {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.6rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2.6rem;
+  }
+
+  .meta-chip {
+    background: var(--nook-1);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 0.85rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+  }
+
+  .meta-chip strong {
+    font-weight: 600;
+  }
+
+  h2 {
+    position: relative;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 2.8rem 0 1.2rem;
+    padding-bottom: 0.55rem;
+  }
+
+  h2:first-of-type {
+    margin-top: 0;
+  }
+
+  h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 30px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--clay);
+  }
+
+  h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    margin: 1.6rem 0 0.6rem;
+  }
+
+  h3:first-of-type {
+    margin-top: 0;
+  }
+
+  p {
+    color: var(--ink-soft);
+    margin: 0 0 0.9rem;
+  }
+
+  ul.case-list {
+    margin: 0 0 0.9rem;
+    padding-left: 1.15rem;
+    color: var(--ink-soft);
+  }
+
+  ul.case-list li {
+    margin-bottom: 0.4rem;
+  }
+
+  ul.case-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  ul.case-list strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  figure {
+    margin: 1.6rem 0;
+  }
+
+  figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 14px 30px rgba(var(--shadow-rgb), 0.14);
+  }
+
+  figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    margin: 3rem 0;
+    background: linear-gradient(to right, transparent, var(--line) 18%, var(--line) 82%, transparent);
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .result-card h3 {
+    margin: 0 0 0.6rem;
+    font-size: 1rem;
+  }
+
+  .result-card ul.case-list {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+
+  .end-note {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .end-note a {
+    font-weight: 600;
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    body, .theme-toggle, .toggle-thumb { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="index.html#work">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
+    Back to My Work
+  </a>
+  <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+    <span class="toggle-thumb" aria-hidden="true"></span>
+  </button>
+</div>
+
+<div class="wrap">
+  <p class="eyebrow">Internship case study</p>
+  <h1>Reduced Support Queries by 40% for an Audio-Visual Tech Brand</h1>
+
+  <div class="meta-row">
+    <span class="meta-chip"><strong>Timeline:</strong> Mar 2024 – Jun 2024</span>
+    <span class="meta-chip"><strong>Client:</strong> Audio-Visual Technology Company</span>
+    <span class="meta-chip"><strong>Role:</strong> Product Designer (Internship), Zensite</span>
+  </div>
+
+  <h2>Introduction</h2>
+  <ul class="case-list">
+    <li><strong>Objective:</strong> Redesign the website to reduce drop-off rates and improve user navigation.</li>
+  </ul>
+
+  <h2>Problem statement</h2>
+  <ul class="case-list">
+    <li>Users reported difficulty navigating the website</li>
+    <li>High drop-off rates affecting conversions</li>
+    <li>Poor user engagement and retention</li>
+    <li>Navigation complexity creating user frustration</li>
+  </ul>
+
+  <h2>Research</h2>
+
+  <h3>Competitive analysis</h3>
+  <ul class="case-list">
+    <li>Analyzed industry-leading AV technology websites</li>
+    <li>Identified navigation best practices</li>
+    <li>Documented successful user flow patterns</li>
+  </ul>
+
+  <h3>User research</h3>
+  <ul class="case-list">
+    <li>Conducted user interviews about navigation pain points</li>
+    <li>Analyzed user behavior and interaction data</li>
+    <li>Gathered feedback on current website performance</li>
+  </ul>
+
+  <h3>Key findings</h3>
+  <ul class="case-list">
+    <li>Complex menu structures confusing users</li>
+    <li>Inconsistent labeling and categorization</li>
+    <li>Lack of clear visual hierarchy</li>
+    <li>Users expect simplified, industry-standard navigation</li>
+  </ul>
+
+  <h2>Solution</h2>
+
+  <h3>Navigation restructuring</h3>
+  <ul class="case-list">
+    <li>Simplified menu architecture based on user mental models</li>
+    <li>Created logical content groupings</li>
+    <li>Implemented consistent labeling system</li>
+    <li>Established clear visual hierarchy</li>
+  </ul>
+
+  <figure>
+    <img src="images/case-internship-1.jpg" alt="Three redesigned app screens: an affiliation page, a featured news page, and a security solutions landing page">
+    <figcaption>Restructured screens with simplified navigation and clearer content groupings.</figcaption>
+  </figure>
+
+  <h3>User experience improvements</h3>
+  <ul class="case-list">
+    <li>Designed accessible interface elements</li>
+    <li>Added strategic interactive components</li>
+    <li>Created clear visual pathways for user tasks</li>
+    <li>Improved content scanability and readability</li>
+  </ul>
+
+  <h3>Information architecture</h3>
+  <ul class="case-list">
+    <li>Developed a comprehensive sitemap from research insights</li>
+    <li>Organized content by user priorities</li>
+    <li>Established logical page relationships</li>
+  </ul>
+
+  <figure>
+    <img src="images/case-internship-2.jpg" alt="Three more redesigned app screens: a case study page, a stats overview, and a step-by-step journey support page">
+    <figcaption>Sitemap and journey-support screens built from the research findings.</figcaption>
+  </figure>
+
+  <hr>
+
+  <h2>Results</h2>
+
+  <div class="result-grid">
+    <div class="result-card">
+      <h3>User feedback</h3>
+      <ul class="case-list">
+        <li>Significantly improved navigation experience</li>
+        <li>Reduced time-to-task completion</li>
+        <li>Higher user satisfaction scores</li>
+      </ul>
+    </div>
+    <div class="result-card">
+      <h3>Stakeholder response</h3>
+      <ul class="case-list">
+        <li>Positive reception of visual hierarchy improvements</li>
+        <li>Approval of enhanced aesthetic and functionality</li>
+        <li>Strong support for user-centered design approach</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Deliverables</h2>
+  <ul class="case-list">
+    <li><strong>Wireframes:</strong> Complete set for all key pages</li>
+    <li><strong>Interactive prototypes:</strong> Clickable navigation flows</li>
+    <li><strong>Design system:</strong> Component library and style guide</li>
+    <li><strong>User flow documentation:</strong> Optimized user journey maps</li>
+    <li><strong>Sitemap:</strong> Comprehensive information architecture</li>
+  </ul>
+
+  <figure>
+    <img src="images/case-internship-3.jpg" alt="Team members collaborating around a table with laptops during the project">
+    <figcaption>Working through the redesign with the team at Zensite.</figcaption>
+  </figure>
+
+  <div class="end-note">
+    <a href="index.html#work">&larr; Back to My Work</a>
+    <a href="mailto:krishanalathamby@gmail.com">Get in touch</a>
+  </div>
+</div>
+
+<script>
+  var root = document.documentElement;
+  var toggle = document.getElementById('themeToggle');
+
+  function sync() {
+    toggle.setAttribute('aria-checked', root.getAttribute('data-theme') === 'dark' ? 'true' : 'false');
+  }
+
+  toggle.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    sync();
+  });
+  sync();
+</script>
+
+</body>
+</html>

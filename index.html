@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krisha — Product Designer</title>
+<meta name="description" content="Portfolio of Krisha, a product designer based in Subang Jaya, Malaysia.">
+
+<script>
+  // Set the theme before the page paints, so there's no flash of the wrong colors.
+  (function () {
+    var theme = null;
+    try { theme = localStorage.getItem('theme'); } catch (e) {}
+    if (theme !== 'dark' && theme !== 'light') {
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+<!--
+  HOW TO CUSTOMIZE THIS FILE
+
+  IMAGES
+  Create a folder called "images" next to this file in your repo and add
+  images with these exact names. Until a file exists, a placeholder shows.
+    images/krisha.jpg            your portrait (square works best)
+    images/drsharan-clinic.jpg   screenshot of the clinic website
+    images/internship.jpg        image for your internship project
+    images/reading.jpg           cover of the book you're reading
+    images/watching.jpg          unused for now — the "watching" card was removed
+    images/watched.jpg           unused for now — the "watched" card was removed
+  Don't put screenshots of the private "Digitizing forms" project in the
+  images folder — the repo is public. Use lock-tool.html to embed them
+  inside the encrypted case study instead.
+
+  TEXT
+  - Experience: edit each <div class="entry"> inside <section id="experience">.
+  - Skills: edit the tags inside <section id="skills">.
+  - Reading & watching: edit each <article class="shelf-item">. To change a
+    progress bar, change the width percentage on its <span>.
+  - Contact: krishanalathamby@gmail.com is already filled in (it appears
+    twice: in Contact and in the password dialog). Update the Website link
+    when you have a real one.
+  - Résumé: the "Download résumé" button in the header links to resume.pdf.
+    Replace that file with your own (keep the name resume.pdf) whenever you
+    update your résumé — a version made from your screenshot is there now.
+  - Internship case study: the full write-up lives in its own page,
+    case-study-internship.html, in the same folder as this file. Edit the
+    text directly in that file; it uses the same fonts, colors and dark
+    mode as this page.
+
+  PASSWORD-PROTECTED CASE STUDY
+  The "Digitizing forms" case study is encrypted inside
+  <script type="application/json" id="locked-forms">. The demo password is
+  changeme-krisha. Open lock-tool.html in your browser to write the real
+  case study, set your own password, and paste the result in its place.
+-->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Public+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    color-scheme: light;
+    --paper: #eef6fc;
+    --card: #f9fcff;
+    --ink: #142530;
+    --ink-soft: #52697c;
+    --clay: #2f8fd1;          /* bright sky blue for decoration */
+    --accent-text: #17598a;   /* deeper blue for text and buttons, meets contrast */
+    --on-accent: #ffffff;
+    --line: #cfe3f0;
+    --nook-1: #dcefff;
+    --nook-2: #bfdff5;
+    --error: #b3261e;
+    --shadow-rgb: 20, 60, 90;
+    --radius: 25px;
+    --max: 720px;
+    --nav-width: 230px;
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0f1a24;
+    --card: #152331;
+    --ink: #eaf3fa;
+    --ink-soft: #93aabd;
+    --clay: #5fb0e8;
+    --accent-text: #5fb0e8;
+    --on-accent: #0f1a24;
+    --line: #22394c;
+    --nook-1: #1c2f40;
+    --nook-2: #142230;
+    --error: #ff8a80;
+    --shadow-rgb: 0, 0, 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    transition: background-color 0.3s ease;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  body:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(480px circle at 88% 6%, rgba(214, 234, 250, 0.6), transparent 62%),
+      radial-gradient(420px circle at 4% 94%, rgba(47, 143, 209, 0.13), transparent 60%);
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  :root[data-theme="dark"] body::before {
+    background:
+      radial-gradient(480px circle at 88% 6%, rgba(47, 143, 209, 0.16), transparent 62%),
+      radial-gradient(420px circle at 4% 94%, rgba(47, 143, 209, 0.1), transparent 60%);
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  a { color: inherit; }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    background: var(--accent-text);
+    color: var(--on-accent);
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: top 0.2s ease;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  /* ---- left section nav ---- */
+
+  .sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 2rem 1.8rem 2rem 2.2rem;
+    z-index: 20;
+  }
+
+  .brand {
+    position: relative;
+    overflow: hidden;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2f8fd1, #17598a);
+    color: #ffffff;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 14px rgba(var(--shadow-rgb), 0.22);
+    margin-bottom: 0.6rem;
+  }
+
+  .brand img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sidenav a {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 0.45rem 0.9rem 0.45rem 1rem;
+    border-left: 2px solid var(--line);
+    border-radius: 0 14px 14px 0;
+    transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  }
+
+  .sidenav a:hover,
+  .sidenav a.active {
+    color: var(--ink);
+    border-left-color: var(--clay);
+    background: var(--nook-1);
+    transform: translateX(3px);
+  }
+
+  .theme-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-top: 0.9rem;
+    padding: 0 0.2rem 0 1rem;
+  }
+
+  .theme-toggle-label {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .theme-toggle {
+    position: relative;
+    flex-shrink: 0;
+    width: 44px;
+    height: 24px;
+    border-radius: 999px;
+    border: none;
+    background: var(--ink-soft);
+    padding: 3px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+
+  .theme-toggle[aria-checked="true"] {
+    background: var(--accent-text);
+  }
+
+  .toggle-thumb {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.25s ease;
+  }
+
+  .theme-toggle[aria-checked="true"] .toggle-thumb {
+    transform: translateX(20px);
+  }
+
+  /* ---- page content ---- */
+
+  .wrap {
+    max-width: var(--max);
+    margin-left: var(--nav-width);
+    margin-right: auto;
+    padding: 5rem 2rem 4rem;
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  header {
+    position: relative;
+    background: radial-gradient(circle at 15% 20%, var(--nook-1), var(--nook-2) 70%);
+    border-radius: 30px;
+    padding: 3rem 2.6rem;
+    box-shadow: 0 14px 34px rgba(var(--shadow-rgb), 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.3rem, 5vw, 2.9rem);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin: 0 0 0.35rem;
+  }
+
+  .role {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--accent-text);
+    margin: 0 0 1.3rem;
+  }
+
+  .bio {
+    max-width: 44ch;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .motto {
+    margin: 1.5rem 0 0;
+    padding: 0.15rem 0 0.15rem 1rem;
+    border-left: 3px solid var(--clay);
+    max-width: 42ch;
+  }
+
+  .motto p {
+    margin: 0;
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .header-actions {
+    margin-top: 1.6rem;
+  }
+
+  .resume-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+  }
+
+  .btn-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .portrait {
+    position: relative;
+    flex-shrink: 0;
+    width: 160px;
+    height: 160px;
+    margin: -1rem -1.5rem -4.5rem 0;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 6px solid var(--paper);
+    background: linear-gradient(135deg, #2f8fd1, #17598a);
+    box-shadow: 0 16px 28px rgba(var(--shadow-rgb), 0.22);
+    transform: rotate(3deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .portrait:hover {
+    transform: rotate(0deg) scale(1.04);
+    box-shadow: 0 20px 34px rgba(var(--shadow-rgb), 0.28);
+  }
+
+  .portrait-initial {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 4rem;
+    color: #ffffff;
+  }
+
+  .portrait img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    margin: 5rem 0 3.2rem;
+    background: linear-gradient(to right, transparent, var(--line) 18%, var(--line) 82%, transparent);
+  }
+
+  h2 {
+    position: relative;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0 0 1.9rem;
+    padding-bottom: 0.6rem;
+  }
+
+  h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 34px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--clay);
+  }
+
+  .section-intro {
+    margin: -0.8rem 0 1.6rem;
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  /* ---- image slots with placeholders ---- */
+
+  .media {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-linear-gradient(135deg, var(--nook-1) 0 12px, var(--nook-2) 12px 24px);
+  }
+
+  .media-label {
+    position: relative;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--card);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    text-align: center;
+  }
+
+  .media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  /* ---- experience ---- */
+
+  .timeline {
+    border-left: 1px solid var(--line);
+    padding-left: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .entry {
+    position: relative;
+  }
+
+  .entry::before {
+    content: '';
+    position: absolute;
+    left: calc(-1.6rem - 4.5px);
+    top: 0.4rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--clay);
+    box-shadow: 0 0 0 4px var(--nook-1);
+  }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .entry-head h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .period {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .entry-company {
+    margin: 0.15rem 0 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--accent-text);
+  }
+
+  .entry p:last-child {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .entry ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 54ch;
+  }
+
+  .entry ul li {
+    margin-bottom: 0.35rem;
+  }
+
+  .entry ul li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- skills ---- */
+
+  .skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.7rem;
+  }
+
+  .skill-group h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 0 0 0.7rem;
+  }
+
+  .skill-group h3::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--clay);
+    margin-right: 0.55rem;
+    vertical-align: middle;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tags li {
+    background: var(--nook-1);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 0.87rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .tags li:hover {
+    background: var(--nook-2);
+    transform: translateY(-2px);
+  }
+
+  /* ---- my work (horizontal) ---- */
+
+  .work-head-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.9rem;
+  }
+
+  .work-head-row h2 {
+    margin-bottom: 0;
+  }
+
+  .carousel-controls {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .car-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-soft);
+    background: var(--card);
+    color: var(--ink);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .car-btn:hover:not(:disabled) {
+    background: var(--nook-1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(var(--shadow-rgb), 0.15);
+  }
+
+  .car-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .gallery {
+    display: flex;
+    gap: 1.1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 0.6rem 4px 1.8rem;
+    margin: -0.6rem -4px -1.2rem;
+    scrollbar-width: none;
+  }
+
+  .gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .project {
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(240px, 72vw, 290px);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .project:hover,
+  .project:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(var(--shadow-rgb), 0.16);
+  }
+
+  .project .media {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
+
+  .project:hover .media img {
+    transform: scale(1.04);
+  }
+
+  .media.locked {
+    background: linear-gradient(135deg, var(--nook-2), var(--nook-1));
+  }
+
+  .lock-badge {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--accent-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(var(--shadow-rgb), 0.16);
+  }
+
+  .project-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1rem 0.5rem 0.4rem;
+  }
+
+  .project-type {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--accent-text);
+    margin: 0 0 0.2rem;
+  }
+
+  .project h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.15rem;
+    margin: 0 0 0.45rem;
+  }
+
+  .project-desc {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+  }
+
+  .project-action {
+    margin-top: auto;
+  }
+
+  .text-link,
+  .text-button {
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .text-link:hover,
+  .text-button:hover {
+    text-decoration-color: var(--clay);
+  }
+
+  .project-note {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* Whole card is clickable: the link's overlay covers the card. */
+  .project--link .text-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+  }
+
+  .project--link .text-link:focus-visible {
+    outline: none;
+  }
+
+  .project--link:has(.text-link:focus-visible) {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+  }
+
+  .project--link:hover .text-link {
+    text-decoration-color: var(--clay);
+  }
+
+  .external-icon {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-left: 0.3em;
+    vertical-align: -0.05em;
+  }
+
+  /* ---- reading & watching ---- */
+
+  .shelf {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .shelf-item {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 1.3rem;
+    align-items: start;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 1.4rem 14px 14px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .shelf-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 26px rgba(var(--shadow-rgb), 0.12);
+  }
+
+  .shelf-cover {
+    aspect-ratio: 2 / 3;
+    border-radius: 12px;
+  }
+
+  .shelf-status {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    margin: 0.3rem 0 0.1rem;
+  }
+
+  .shelf-item h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .shelf-series {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .shelf-meta {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin: 0.05rem 0 0.8rem;
+  }
+
+  .progress {
+    height: 6px;
+    max-width: 260px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+    margin: 0 0 0.4rem;
+  }
+
+  .progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--clay);
+  }
+
+  .shelf-where,
+  .shelf-feel {
+    font-size: 0.92rem;
+    margin: 0 0 0.45rem;
+    max-width: 52ch;
+  }
+
+  .shelf-where { color: var(--ink-soft); }
+  .shelf-feel { color: var(--ink); margin-bottom: 0.2rem; }
+
+  .shelf-where strong,
+  .shelf-feel strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* ---- contact ---- */
+
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .contact-list a {
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-soft);
+    padding-bottom: 0.1rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .contact-list a:hover {
+    border-color: var(--clay);
+    transform: translateX(4px);
+  }
+
+  footer {
+    margin-top: 4rem;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---- password dialog ---- */
+
+  .lock-dialog {
+    width: min(580px, calc(100vw - 2rem));
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 30px 60px rgba(var(--shadow-rgb), 0.3);
+  }
+
+  .lock-dialog::backdrop {
+    background: rgba(8, 20, 32, 0.55);
+    backdrop-filter: blur(3px);
+  }
+
+  .dialog-inner {
+    padding: 2rem 2rem 1.8rem;
+  }
+
+  .dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .dialog-head h2 {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+
+  .dialog-close {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--ink-soft);
+    background: var(--card);
+    color: var(--ink);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .lock-form p {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  .lock-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin: 1.3rem 0 0.45rem;
+  }
+
+  .lock-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .lock-row input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--ink-soft);
+    background: var(--card);
+    color: var(--ink);
+  }
+
+  .btn {
+    font: inherit;
+    font-weight: 600;
+    padding: 0.7rem 1.3rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent-text);
+    color: var(--on-accent);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+  }
+
+  .btn:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .lock-form .lock-error {
+    color: var(--error);
+    font-size: 0.9rem;
+    min-height: 1.5em;
+    margin-top: 0.6rem;
+  }
+
+  .lock-form .lock-hint {
+    font-size: 0.88rem;
+    margin-top: 0.4rem;
+  }
+
+  .case-study:focus {
+    outline: none;
+  }
+
+  .case-study h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 1.6rem 0 0.4rem;
+  }
+
+  .case-study h3:first-child {
+    margin-top: 0;
+  }
+
+  .case-study p {
+    margin: 0 0 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  .case-study img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 14px;
+    margin: 1rem 0;
+  }
+
+  /* ---- responsive ---- */
+
+  @media (max-width: 860px) {
+    .sidenav {
+      right: 0;
+      width: auto;
+      height: auto;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1.4rem;
+      padding: 0.9rem 1.4rem;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+    }
+    .sidenav a {
+      border-left: none;
+      border-radius: 0;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      padding: 0.2rem 0 0.35rem;
+      white-space: nowrap;
+    }
+    .sidenav a:hover,
+    .sidenav a.active {
+      background: transparent;
+      border-bottom-color: var(--clay);
+      transform: none;
+    }
+    .brand {
+      display: none;
+    }
+    .theme-toggle-row {
+      margin: 0;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .wrap {
+      margin-left: auto;
+      padding-top: 6.5rem;
+    }
+    header,
+    section {
+      scroll-margin-top: 5rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    header {
+      flex-direction: column-reverse;
+      text-align: center;
+      padding-top: 2.4rem;
+    }
+    .portrait {
+      margin: 0;
+      transform: rotate(0deg);
+    }
+    .bio,
+    .motto {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .motto {
+      border-left: none;
+      padding: 0;
+    }
+    .motto::before {
+      content: '';
+      display: block;
+      width: 34px;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--clay);
+      margin: 0 auto 0.8rem;
+    }
+    hr {
+      margin-top: 3.5rem;
+    }
+    .shelf-item {
+      grid-template-columns: 84px 1fr;
+      gap: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding-left: 1.2rem; padding-right: 1.2rem; }
+    header { padding: 2.2rem 1.4rem 2.4rem; border-radius: 25px; }
+    .dialog-inner { padding: 1.5rem 1.3rem; }
+    .lock-row { flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; transition: none; }
+    body { transition: none; }
+    .gallery { scroll-behavior: auto; }
+    .wrap { animation: none; }
+    .portrait, .project, .media img, .shelf-item, .contact-list a,
+    .sidenav a, .tags li, .theme-toggle, .toggle-thumb, .car-btn,
+    .skip-link, .btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<nav class="sidenav" aria-label="Sections">
+  <div class="brand" aria-hidden="true">K<img src="images/krisha.jpg" alt="" onerror="this.remove()"></div>
+  <a href="#intro">Intro</a>
+  <a href="#experience">Experience</a>
+  <a href="#skills">Skills</a>
+  <a href="#work">My Work</a>
+  <a href="#shelf">Reading &amp; watching</a>
+  <a href="#contact">Contact</a>
+  <div class="theme-toggle-row">
+    <span class="theme-toggle-label" id="themeLabel">Dark mode</span>
+    <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-labelledby="themeLabel">
+      <span class="toggle-thumb" aria-hidden="true"></span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+<main id="main" tabindex="-1">
+
+  <header id="intro">
+    <div class="header-text">
+      <h1>Krisha</h1>
+      <p class="role">Product Designer</p>
+      <p class="bio">
+        Originally from Langkawi, now living in Subang Jaya. I'm a big animal
+        lover, a constant reader and a cinephile, and I'm currently learning
+        filmmaking and photography. The motto I live by:
+      </p>
+      <blockquote class="motto">
+        <p>Your thoughts reflect what you do and who you are, so pick your thoughts like how you pick your vegetables in the market.</p>
+      </blockquote>
+      <div class="header-actions">
+        <a class="btn resume-btn" href="resume.pdf" download>
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3 3-3"/><path d="M2.5 11v1.5A1.5 1.5 0 0 0 4 14h8a1.5 1.5 0 0 0 1.5-1.5V11"/></svg>
+          Download résumé
+        </a>
+      </div>
+    </div>
+    <div class="portrait">
+      <span class="portrait-initial" aria-hidden="true">K</span>
+      <img src="images/krisha.jpg" alt="Portrait of Krisha" onerror="this.remove()">
+    </div>
+  </header>
+
+  <hr>
+
+  <section id="experience" aria-labelledby="experience-title">
+    <h2 id="experience-title">Experience</h2>
+    <div class="timeline">
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>Digital Content Strategist</h3>
+          <span class="period">Oct 2026 — Present</span>
+        </div>
+        <p class="entry-company">Dr. Sharan's Clinic</p>
+        <ul>
+          <li>Built and maintained the clinic website, improving overall UX for patients</li>
+          <li>Managed appointment scheduling and front-desk operations to optimize patient flow</li>
+          <li>Drove social media strategy, educating audiences on hormone health</li>
+          <li>Digitized intake forms, cutting paper waste and boosting efficiency</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>Product Designer (Internship)</h3>
+          <span class="period">Mar 2024 — Jun 2024</span>
+        </div>
+        <p class="entry-company">Zensite (Singapore)</p>
+        <ul>
+          <li>Built site maps and ran competitive analysis to guide website redesign strategy</li>
+          <li>Created responsive web and mobile wireframes with user-friendly layouts</li>
+          <li>Collaborated with product designers to balance UX, technical feasibility and business goals</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>Product Genius (Sales)</h3>
+          <span class="period">Mar 2022 — Sep 2022</span>
+        </div>
+        <p class="entry-company">Mytukar Sdn Bhd</p>
+        <ul>
+          <li>Sold 10 cars over 5 months, building strong sales acumen and customer engagement skills</li>
+          <li>Learned and practiced effective pitching, a skill that now shapes how I present design work</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="skills" aria-labelledby="skills-title">
+    <h2 id="skills-title">Skills</h2>
+    <div class="skill-groups">
+
+      <div class="skill-group">
+        <h3>Design</h3>
+        <ul class="tags">
+          <li>UI/UX design</li>
+          <li>Website development</li>
+          <li>Competitive analysis</li>
+          <li>Wireframing</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Tools</h3>
+        <ul class="tags">
+          <li>Webflow</li>
+          <li>Google Apps Script</li>
+          <li>Google Suite</li>
+          <li>Meta Business Suite</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Also</h3>
+        <ul class="tags">
+          <li>Social media management</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Certifications</h3>
+        <ul class="tags">
+          <li>Google UX Certificate</li>
+        </ul>
+      </div>
+
+      <div class="skill-group">
+        <h3>Also learning</h3>
+        <ul class="tags">
+          <li>Photography</li>
+          <li>Filmmaking</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="work" aria-labelledby="work-title">
+    <div class="work-head-row">
+      <h2 id="work-title">My Work</h2>
+      <div class="carousel-controls">
+        <button class="car-btn" id="prevBtn" type="button" aria-controls="projectTrack" aria-label="Show previous projects">&larr;</button>
+        <button class="car-btn" id="nextBtn" type="button" aria-controls="projectTrack" aria-label="Show next projects">&rarr;</button>
+      </div>
+    </div>
+
+    <div class="gallery" id="projectTrack" role="region" aria-label="Projects">
+
+      <article class="project project--link">
+        <div class="media">
+          <span class="media-label">Add a screenshot</span>
+          <img src="images/drsharan-clinic.jpg" alt="" loading="lazy" onerror="this.remove()">
+        </div>
+        <div class="project-body">
+          <p class="project-type">Website</p>
+          <h3>Dr. Sharan's Clinic</h3>
+          <p class="project-desc">Website for a hormone clinic in Subang Jaya, including a step-by-step guide that tells each patient when to come in for their blood test and how to prepare.</p>
+          <div class="project-action">
+            <a class="text-link" href="https://drsharanclinic.my/" target="_blank" rel="noopener">Visit drsharanclinic.my<svg class="external-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h4v4M13 3 7 9M11 9.5V13H3V5h3.5"/></svg><span class="sr-only"> (opens in a new tab)</span></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="media locked">
+          <span class="lock-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>
+          </span>
+        </div>
+        <div class="project-body">
+          <p class="project-type">Private project</p>
+          <h3>Digitizing forms</h3>
+          <p class="project-desc">Turning paper forms into digital ones. This project is private, so the case study is password protected.</p>
+          <div class="project-action">
+            <button class="text-button" id="openLock" type="button" aria-haspopup="dialog">Unlock case study</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project project--link">
+        <div class="media">
+          <span class="media-label">Add an image</span>
+          <img src="images/internship.jpg" alt="Three app screens from the redesigned navigation, shown on phone mockups" loading="lazy" onerror="this.remove()">
+        </div>
+        <div class="project-body">
+          <p class="project-type">Internship</p>
+          <h3>Reduced Support Queries by 40%</h3>
+          <p class="project-desc">Redesigned the navigation for an audio-visual tech brand during my internship at Zensite (Singapore) — simplifying a confusing menu structure that was driving high drop-off rates and support queries.</p>
+          <div class="project-action">
+            <a class="text-link" href="case-study-internship.html">Read the case study</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="shelf" aria-labelledby="shelf-title">
+    <h2 id="shelf-title">Reading &amp; watching</h2>
+    <p class="section-intro">What's on my nightstand lately — what I'm watching is coming soon.</p>
+
+    <div class="shelf">
+
+      <article class="shelf-item">
+        <div class="media shelf-cover">
+          <span class="media-label">Cover</span>
+          <img src="images/reading.jpg" alt="Cover of The Deal by Elle Kennedy" loading="lazy" onerror="this.remove()">
+        </div>
+        <div>
+          <p class="shelf-status">Reading now</p>
+          <h3>The Deal <span class="shelf-series">(Off-Campus)</span></h3>
+          <p class="shelf-meta">by Elle Kennedy</p>
+          <div class="progress" aria-hidden="true"><span style="width: 44%"></span></div>
+          <p class="shelf-where"><strong>Where I am:</strong> Page 190 of 429</p>
+          <p class="shelf-feel"><strong>How I feel:</strong> I really like Hannah, she's a strong woman.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="contact" aria-labelledby="contact-title">
+    <h2 id="contact-title">Get in touch</h2>
+    <ul class="contact-list">
+      <li><a href="mailto:krishanalathamby@gmail.com">krishanalathamby@gmail.com</a></li>
+      <li><a href="tel:+601156499629">+60 11-5649 9629</a></li>
+      <li><a href="https://yourusername.github.io">yourusername.github.io</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; <span id="year"></span> Krisha</p>
+</footer>
+</div>
+
+<dialog class="lock-dialog" id="lockDialog" aria-labelledby="lockTitle">
+  <div class="dialog-inner">
+    <div class="dialog-head">
+      <h2 id="lockTitle">Digitizing forms</h2>
+      <button class="dialog-close" id="lockClose" type="button" aria-label="Close">&times;</button>
+    </div>
+
+    <form class="lock-form" id="lockForm" novalidate>
+      <p>This project is private. Enter the password to read the case study.</p>
+      <label for="lockPassword">Password</label>
+      <div class="lock-row">
+        <input id="lockPassword" type="password" autocomplete="current-password" aria-describedby="lockError lockHint">
+        <button class="btn" id="lockSubmit" type="submit">Unlock</button>
+      </div>
+      <p class="lock-error" id="lockError" role="alert"></p>
+      <p class="lock-hint" id="lockHint">Don't have it? <a href="mailto:krishanalathamby@gmail.com?subject=Portfolio%20access">Email me for access</a>.</p>
+    </form>
+
+    <div class="case-study" id="lockContent" tabindex="-1" hidden></div>
+  </div>
+</dialog>
+
+<!-- Encrypted case study. Replace the contents using lock-tool.html. -->
+<script type="application/json" id="locked-forms">{"v":1,"iter":250000,"salt":"ew4yG5naGuAnE9ghQgu0uQ==","iv":"qCzuLgyE88oTA/9A","data":"XPmseMnFfHB1R+eZ6KfvKrrJV/2aIxLAnFUUa9AoMA4onpgd8yNL5qwQQRuhfj4FoFPsBKK9I8yOj5x7B0IXDsYG6S4PpiJ8htBuVS9XdBiu56BoQQazlDehc5fHY4MSFcIWcGZHbNfEUCZ9peS65VNgIZEZRBjY/cLJwFW++md1iexRVWkvKH4iePlm2ee8N8dKdtw/yGljotuFtfWaYn7skF2OnRuKE8lWHFG//PUnkzeax+OdojuiTJVlCT37FdPeLDKKGLNSutLk1bH/7D1I3Ta+Hm6U/cf4X5e3ReZZM686MRmYt3AnOBityOb36geJvBDrHzA9CwMy8W809Tyazz7hpMWlZcoudNenABlOKWHnN3hcCJ27I5RxeD2ROa5m+3XIjSJw0uZAfQt7q57jxLrfuLtPKOsI1O3kuf//aum78EnvuwYCgL2vAIm8d2sK6rPLBDWo9M1l/WlbFvomubPLiN63iEL0+Hp4Csbpnc1Pu4TPAKU4S7paiO93h9GbrVjawUhdr24OgULeh6eJS0LveNBxIffLgLtG7BeiVZIrjQDBtcKTlluYp2Ckjy379rkqC4veYQtVw0PQtaeJJ2nZqsuGMCOfwv7/Z+cbvGNWLKqmZd5z"}</script>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- Dark mode switch ----
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+
+  function syncToggle() {
+    themeToggle.setAttribute('aria-checked', root.getAttribute('data-theme') === 'dark' ? 'true' : 'false');
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) { /* won't persist, that's fine */ }
+    syncToggle();
+  });
+  syncToggle();
+
+  // ---- Highlight the nav link for the section in view ----
+  const navLinks = Array.from(document.querySelectorAll('.sidenav a[href^="#"]'));
+  const navTargets = navLinks.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+
+  function setActive(id) {
+    navLinks.forEach((link) => {
+      const on = link.getAttribute('href') === '#' + id;
+      link.classList.toggle('active', on);
+      if (on) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+
+  navTargets.forEach((target) => observer.observe(target));
+
+  window.addEventListener('scroll', () => {
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    if (atBottom && navTargets.length) setActive(navTargets[navTargets.length - 1].id);
+  }, { passive: true });
+
+  // ---- My Work carousel ----
+  const track = document.getElementById('projectTrack');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function step() {
+    const card = track.querySelector('.project');
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 18;
+    return card ? card.getBoundingClientRect().width + gap : 300;
+  }
+
+  function updateButtons() {
+    prevBtn.disabled = track.scrollLeft <= 4;
+    nextBtn.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+  }
+
+  prevBtn.addEventListener('click', () => track.scrollBy({ left: -step() }));
+  nextBtn.addEventListener('click', () => track.scrollBy({ left: step() }));
+  track.addEventListener('scroll', updateButtons, { passive: true });
+  window.addEventListener('resize', updateButtons);
+  updateButtons();
+
+  // ---- Password-protected case study ----
+  // The case study is encrypted (AES-GCM, key derived from the password with
+  // PBKDF2). It can only be read with the right password; viewing the page
+  // source shows scrambled data, not the content.
+  const lockDialog = document.getElementById('lockDialog');
+  const lockForm = document.getElementById('lockForm');
+  const lockInput = document.getElementById('lockPassword');
+  const lockSubmit = document.getElementById('lockSubmit');
+  const lockError = document.getElementById('lockError');
+  const lockContent = document.getElementById('lockContent');
+  const openLock = document.getElementById('openLock');
+  let unlockedHTML = null;
+
+  function b64ToBytes(str) {
+    return Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+  }
+
+  async function decryptCaseStudy(password) {
+    const blob = JSON.parse(document.getElementById('locked-forms').textContent);
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']
+    );
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: b64ToBytes(blob.salt), iterations: blob.iter, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+    const plain = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: b64ToBytes(blob.iv) }, key, b64ToBytes(blob.data)
+    );
+    return new TextDecoder().decode(plain);
+  }
+
+  function showCaseStudy() {
+    lockForm.hidden = true;
+    lockContent.innerHTML = unlockedHTML;
+    lockContent.hidden = false;
+    lockContent.focus();
+  }
+
+  openLock.addEventListener('click', () => {
+    lockDialog.showModal();
+    if (unlockedHTML) {
+      showCaseStudy();
+    } else {
+      lockError.textContent = '';
+      lockInput.value = '';
+      lockInput.focus();
+    }
+  });
+
+  lockForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!window.crypto || !crypto.subtle) {
+      lockError.textContent = "This browser can't unlock the case study. Try an up-to-date Chrome, Safari, Firefox or Edge.";
+      return;
+    }
+
+    const password = lockInput.value;
+    if (!password) {
+      lockError.textContent = 'Enter the password to continue.';
+      lockInput.focus();
+      return;
+    }
+
+    lockSubmit.disabled = true;
+    lockSubmit.textContent = 'Unlocking…';
+    try {
+      unlockedHTML = await decryptCaseStudy(password);
+      lockError.textContent = '';
+      openLock.textContent = 'Read case study';
+      showCaseStudy();
+    } catch (err) {
+      lockError.textContent = "That password didn't work. Check it and try again.";
+      lockInput.select();
+    } finally {
+      lockSubmit.disabled = false;
+      lockSubmit.textContent = 'Unlock';
+    }
+  });
+
+  document.getElementById('lockClose').addEventListener('click', () => lockDialog.close());
+
+  // Clicking the dimmed backdrop closes the dialog too.
+  lockDialog.addEventListener('click', (event) => {
+    if (event.target === lockDialog) lockDialog.close();
+  });
+
+  lockDialog.addEventListener('close', () => openLock.focus());
+</script>
+
+</body>
+</html>
