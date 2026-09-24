@@ -34,6 +34,12 @@
   images folder — the repo is public. Use lock-tool.html to embed them
   inside the encrypted case study instead.
 
+  SKY BACKGROUND
+  sky.js draws the background on both pages: clouds in light mode (from the
+  images in images/sky/ — keep that folder) and the Milky Way in dark mode.
+  Both slowly rotate together. Speed, cloud amount and colors are in the
+  CONFIG block at the top of sky.js.
+
   TEXT
   - Experience: edit each <div class="entry"> inside <section id="experience">.
   - Skills: edit the tags inside <section id="skills">.
@@ -42,7 +48,8 @@
   - Contact: krishanalathamby@gmail.com is already filled in (it appears
     twice: in Contact and in the password dialog). Update the Website link
     when you have a real one.
-  - Résumé: the "Download résumé" button in the header links to resume.pdf.
+  - Résumé: the "View résumé" button in the header opens resume.pdf in a new
+    tab, where the browser's PDF viewer lets visitors download or print it.
     Replace that file with your own (keep the name resume.pdf) whenever you
     update your résumé — a version made from your screenshot is there now.
   - Internship case study: the full write-up lives in its own page,
@@ -65,7 +72,7 @@
     --paper: #eef6fc;
     --card: #f9fcff;
     --ink: #142530;
-    --ink-soft: #52697c;
+    --ink-soft: #465b6c;
     --clay: #2f8fd1;          /* bright sky blue for decoration */
     --accent-text: #17598a;   /* deeper blue for text and buttons, meets contrast */
     --on-accent: #ffffff;
@@ -75,8 +82,25 @@
     --error: #b3261e;
     --shadow-rgb: 20, 60, 90;
     --radius: 25px;
-    --max: 720px;
-    --nav-width: 230px;
+
+    /* frosted-glass panels that sit over the cloud background */
+    --glass: rgba(249, 252, 255, 0.8);
+    --glass-edge: rgba(255, 255, 255, 0.7);
+    --glass-header-1: rgba(224, 241, 255, 0.88);
+    --glass-header-2: rgba(198, 227, 247, 0.84);
+    --blur: blur(18px) saturate(1.3);
+
+    /* sky shown before sky.js draws the clouds or the Milky Way */
+    --sky-top: #0d5695;
+    --sky-bottom: #4591d2;
+
+    /* layout: the nav and content are centered on the page as one group */
+    --max: 760px;
+    --nav-width: 210px;
+    --gap: 2rem;
+    --side: max(1.25rem, calc((100vw - var(--nav-width) - var(--gap) - var(--max)) / 2));
+    --pad-x: 2.4rem;
+    --pad-y: 2.2rem;
   }
 
   :root[data-theme="dark"] {
@@ -93,6 +117,12 @@
     --nook-2: #142230;
     --error: #ff8a80;
     --shadow-rgb: 0, 0, 0;
+    --glass: rgba(18, 28, 44, 0.8);
+    --glass-edge: rgba(255, 255, 255, 0.07);
+    --glass-header-1: rgba(26, 40, 62, 0.86);
+    --glass-header-2: rgba(16, 26, 42, 0.84);
+    --sky-top: #03060f;
+    --sky-bottom: #120a1d;
   }
 
   * { box-sizing: border-box; }
@@ -117,21 +147,14 @@
     overflow: hidden;
   }
 
+  /* Plain sky gradient. sky.js draws the clouds (light) or the Milky Way (dark) above it. */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background:
-      radial-gradient(480px circle at 88% 6%, rgba(214, 234, 250, 0.6), transparent 62%),
-      radial-gradient(420px circle at 4% 94%, rgba(47, 143, 209, 0.13), transparent 60%);
-    z-index: -2;
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom) 65%);
+    z-index: -3;
     pointer-events: none;
-  }
-
-  :root[data-theme="dark"] body::before {
-    background:
-      radial-gradient(480px circle at 88% 6%, rgba(47, 143, 209, 0.16), transparent 62%),
-      radial-gradient(420px circle at 4% 94%, rgba(47, 143, 209, 0.1), transparent 60%);
   }
 
   body::after {
@@ -184,19 +207,61 @@
 
   /* ---- left section nav ---- */
 
+  .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: var(--blur);
+    backdrop-filter: var(--blur);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 14px 34px rgba(var(--shadow-rgb), 0.1);
+  }
+
   .sidenav {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: var(--side);
+    transform: translateY(-50%);
     width: var(--nav-width);
-    height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 0.9rem;
-    padding: 2rem 1.8rem 2rem 2.2rem;
+    padding: 1.6rem 1.1rem 1.4rem;
+    border-radius: 28px;
     z-index: 20;
   }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .nav-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  .sidenav.open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .sidenav.open .nav-toggle span:nth-child(2) { opacity: 0; }
+  .sidenav.open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
   .brand {
     position: relative;
@@ -213,7 +278,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 6px 14px rgba(var(--shadow-rgb), 0.22);
-    margin-bottom: 0.6rem;
+    margin: 0 0 0.3rem 0.6rem;
   }
 
   .brand img {
@@ -247,7 +312,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.7rem;
-    margin-top: 0.9rem;
+    margin-top: 0.4rem;
     padding: 0 0.2rem 0 1rem;
   }
 
@@ -292,10 +357,9 @@
 
   .wrap {
     max-width: var(--max);
-    margin-left: var(--nav-width);
-    margin-right: auto;
-    padding: 5rem 2rem 4rem;
-    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    margin-left: calc(var(--side) + var(--nav-width) + var(--gap));
+    margin-right: var(--side);
+    padding: 3rem 0;
   }
 
   @keyframes rise {
@@ -303,16 +367,38 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
   main:focus {
     outline: none;
   }
 
+  main > header,
+  main > section {
+    border-radius: 30px;
+    scroll-margin-top: 1.5rem;
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  main > section:nth-of-type(1) { animation-delay: 0.08s; }
+  main > section:nth-of-type(2) { animation-delay: 0.16s; }
+  main > section:nth-of-type(n + 3) { animation-delay: 0.24s; }
+
+  main > section {
+    padding: var(--pad-y) var(--pad-x);
+  }
+
+  header.glass {
+    background: radial-gradient(circle at 15% 20%, var(--glass-header-1), var(--glass-header-2) 70%);
+  }
+
   header {
     position: relative;
-    background: radial-gradient(circle at 15% 20%, var(--nook-1), var(--nook-2) 70%);
-    border-radius: 30px;
     padding: 3rem 2.6rem;
-    box-shadow: 0 14px 34px rgba(var(--shadow-rgb), 0.14);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -416,13 +502,6 @@
     height: 100%;
     object-fit: cover;
     display: block;
-  }
-
-  hr {
-    border: none;
-    height: 1px;
-    margin: 5rem 0 3.2rem;
-    background: linear-gradient(to right, transparent, var(--line) 18%, var(--line) 82%, transparent);
   }
 
   h2 {
@@ -661,8 +740,10 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    padding: 0.6rem 4px 1.8rem;
-    margin: -0.6rem -4px -1.2rem;
+    /* run the cards edge to edge inside the panel, but line the first one up with the text */
+    padding: 0.6rem var(--pad-x) 1.8rem;
+    margin: -0.6rem calc(-1 * var(--pad-x)) -1.2rem;
+    scroll-padding-inline: var(--pad-x);
     scrollbar-width: none;
   }
 
@@ -914,9 +995,17 @@
   }
 
   footer {
-    margin-top: 4rem;
+    margin-top: 2rem;
+    text-align: center;
     font-size: 0.85rem;
     color: var(--ink-soft);
+  }
+
+  footer p {
+    display: inline-block;
+    margin: 0;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
   }
 
   /* ---- password dialog ---- */
@@ -1059,49 +1148,57 @@
 
   /* ---- responsive ---- */
 
+  /* Tablets and phones: the nav becomes a floating top bar with a menu button. */
   @media (max-width: 860px) {
     .sidenav {
-      right: 0;
-      width: auto;
-      height: auto;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1.4rem;
-      padding: 0.9rem 1.4rem;
-      background: var(--paper);
-      border-bottom: 1px solid var(--line);
-      overflow-x: auto;
-    }
-    .sidenav a {
-      border-left: none;
-      border-radius: 0;
-      background: transparent;
-      border-bottom: 2px solid transparent;
-      padding: 0.2rem 0 0.35rem;
-      white-space: nowrap;
-    }
-    .sidenav a:hover,
-    .sidenav a.active {
-      background: transparent;
-      border-bottom-color: var(--clay);
+      top: 0.75rem;
+      left: 0.75rem;
+      right: 0.75rem;
       transform: none;
+      width: auto;
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 0 0.9rem;
+      padding: 0.55rem 0.6rem;
+      border-radius: 24px;
     }
     .brand {
-      display: none;
+      grid-row: 1;
+      grid-column: 1;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      font-size: 1rem;
     }
     .theme-toggle-row {
+      grid-row: 1;
+      grid-column: 3;
       margin: 0;
       padding: 0;
-      flex-shrink: 0;
+    }
+    .nav-toggle {
+      grid-row: 1;
+      grid-column: 4;
+      display: flex;
+    }
+    .nav-links {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      display: none;
+      padding: 0.8rem 0.2rem 0.4rem;
+    }
+    .sidenav.open .nav-links {
+      display: flex;
     }
     .wrap {
-      margin-left: auto;
-      padding-top: 6.5rem;
+      max-width: calc(var(--max) + 2rem);
+      margin: 0 auto;
+      padding: 5.5rem 1rem 2.5rem;
     }
-    header,
-    section {
-      scroll-margin-top: 5rem;
+    main > header,
+    main > section {
+      scroll-margin-top: 5.5rem;
     }
   }
 
@@ -1133,8 +1230,9 @@
       background: var(--clay);
       margin: 0 auto 0.8rem;
     }
-    hr {
-      margin-top: 3.5rem;
+    :root {
+      --pad-x: 1.5rem;
+      --pad-y: 1.9rem;
     }
     .shelf-item {
       grid-template-columns: 84px 1fr;
@@ -1144,8 +1242,11 @@
   }
 
   @media (max-width: 480px) {
-    .wrap { padding-left: 1.2rem; padding-right: 1.2rem; }
-    header { padding: 2.2rem 1.4rem 2.4rem; border-radius: 25px; }
+    :root { --pad-x: 1.25rem; }
+    .wrap { padding-left: 0.75rem; padding-right: 0.75rem; }
+    header { padding: 2.2rem 1.4rem 2.4rem; }
+    main > header,
+    main > section { border-radius: 25px; }
     .dialog-inner { padding: 1.5rem 1.3rem; }
     .lock-row { flex-direction: column; }
   }
@@ -1154,10 +1255,19 @@
     html { scroll-behavior: auto; transition: none; }
     body { transition: none; }
     .gallery { scroll-behavior: auto; }
-    .wrap { animation: none; }
+    main > header, main > section { animation: none; }
     .portrait, .project, .media img, .shelf-item, .contact-list a,
     .sidenav a, .tags li, .theme-toggle, .toggle-thumb, .car-btn,
-    .skip-link, .btn { transition: none; }
+    .skip-link, .btn, .nav-toggle span { transition: none; }
+  }
+
+  /* Solid panels for people who turn transparency off, or browsers without blur. */
+  @media (prefers-reduced-transparency: reduce) {
+    :root { --glass: var(--card); --glass-header-1: var(--nook-1); --glass-header-2: var(--nook-2); }
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    :root { --glass: var(--card); --glass-header-1: var(--nook-1); --glass-header-2: var(--nook-2); }
   }
 </style>
 </head>
@@ -1165,14 +1275,19 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="sidenav" aria-label="Sections">
+<nav class="sidenav glass" id="sidenav" aria-label="Sections">
   <div class="brand" aria-hidden="true">K<img src="images/krisha.jpg" alt="" onerror="this.remove()"></div>
-  <a href="#intro">Intro</a>
-  <a href="#experience">Experience</a>
-  <a href="#skills">Skills</a>
-  <a href="#work">My Work</a>
-  <a href="#shelf">Reading &amp; watching</a>
-  <a href="#contact">Contact</a>
+  <div class="nav-links" id="navLinks">
+    <a href="#intro">Intro</a>
+    <a href="#experience">Experience</a>
+    <a href="#skills">Skills</a>
+    <a href="#work">My Work</a>
+    <a href="#shelf">Reading &amp; watching</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
   <div class="theme-toggle-row">
     <span class="theme-toggle-label" id="themeLabel">Dark mode</span>
     <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-labelledby="themeLabel">
@@ -1184,7 +1299,7 @@
 <div class="wrap">
 <main id="main" tabindex="-1">
 
-  <header id="intro">
+  <header class="glass" id="intro">
     <div class="header-text">
       <h1>Krisha</h1>
       <p class="role">Product Designer</p>
@@ -1197,9 +1312,9 @@
         <p>Your thoughts reflect what you do and who you are, so pick your thoughts like how you pick your vegetables in the market.</p>
       </blockquote>
       <div class="header-actions">
-        <a class="btn resume-btn" href="resume.pdf" download>
-          <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0L5 7m3 3 3-3"/><path d="M2.5 11v1.5A1.5 1.5 0 0 0 4 14h8a1.5 1.5 0 0 0 1.5-1.5V11"/></svg>
-          Download résumé
+        <a class="btn resume-btn" href="resume.pdf" target="_blank" rel="noopener">
+          <svg class="btn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8Z"/><circle cx="8" cy="8" r="2"/></svg>
+          View résumé
         </a>
       </div>
     </div>
@@ -1209,9 +1324,7 @@
     </div>
   </header>
 
-  <hr>
-
-  <section id="experience" aria-labelledby="experience-title">
+  <section class="glass" id="experience" aria-labelledby="experience-title">
     <h2 id="experience-title">Experience</h2>
     <div class="timeline">
 
@@ -1257,9 +1370,7 @@
     </div>
   </section>
 
-  <hr>
-
-  <section id="skills" aria-labelledby="skills-title">
+  <section class="glass" id="skills" aria-labelledby="skills-title">
     <h2 id="skills-title">Skills</h2>
     <div class="skill-groups">
 
@@ -1308,9 +1419,7 @@
     </div>
   </section>
 
-  <hr>
-
-  <section id="work" aria-labelledby="work-title">
+  <section class="glass" id="work" aria-labelledby="work-title">
     <div class="work-head-row">
       <h2 id="work-title">My Work</h2>
       <div class="carousel-controls">
@@ -1370,9 +1479,7 @@
     </div>
   </section>
 
-  <hr>
-
-  <section id="shelf" aria-labelledby="shelf-title">
+  <section class="glass" id="shelf" aria-labelledby="shelf-title">
     <h2 id="shelf-title">Reading &amp; watching</h2>
     <p class="section-intro">What's on my nightstand lately — what I'm watching is coming soon.</p>
 
@@ -1396,9 +1503,7 @@
     </div>
   </section>
 
-  <hr>
-
-  <section id="contact" aria-labelledby="contact-title">
+  <section class="glass" id="contact" aria-labelledby="contact-title">
     <h2 id="contact-title">Get in touch</h2>
     <ul class="contact-list">
       <li><a href="mailto:krishanalathamby@gmail.com">krishanalathamby@gmail.com</a></li>
@@ -1410,7 +1515,7 @@
 </main>
 
 <footer>
-  <p>&copy; <span id="year"></span> Krisha</p>
+  <p class="glass">&copy; <span id="year"></span> Krisha</p>
 </footer>
 </div>
 
@@ -1483,6 +1588,29 @@
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
     if (atBottom && navTargets.length) setActive(navTargets[navTargets.length - 1].id);
   }, { passive: true });
+
+  // ---- Menu button (phones and tablets) ----
+  const sidenav = document.getElementById('sidenav');
+  const navToggle = document.getElementById('navToggle');
+
+  function setMenu(open) {
+    sidenav.classList.toggle('open', open);
+    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  navToggle.addEventListener('click', () => setMenu(!sidenav.classList.contains('open')));
+  navLinks.forEach((link) => link.addEventListener('click', () => setMenu(false)));
+
+  document.addEventListener('click', (event) => {
+    if (!sidenav.contains(event.target)) setMenu(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && sidenav.classList.contains('open')) {
+      setMenu(false);
+      navToggle.focus();
+    }
+  });
 
   // ---- My Work carousel ----
   const track = document.getElementById('projectTrack');
@@ -1599,6 +1727,7 @@
 
   lockDialog.addEventListener('close', () => openLock.focus());
 </script>
+<script src="sky.js"></script>
 
 </body>
 </html>
