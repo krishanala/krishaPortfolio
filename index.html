@@ -751,6 +751,26 @@
     display: none;
   }
 
+  /* Subheading for a group of projects, styled like the skill group headings. */
+  .work-subhead {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    margin: 2.4rem 0 0.9rem;
+  }
+
+  .work-subhead::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--clay);
+    margin-right: 0.55rem;
+    vertical-align: middle;
+  }
+
   .project {
     position: relative;
     flex: 0 0 auto;
@@ -1446,6 +1466,26 @@
         </div>
       </article>
 
+      <article class="project project--link">
+        <div class="media">
+          <span class="media-label">Add an image</span>
+          <img src="images/internship.jpg" alt="Three app screens from the redesigned navigation, shown on phone mockups" loading="lazy" onerror="this.remove()">
+        </div>
+        <div class="project-body">
+          <p class="project-type">Internship</p>
+          <h3>Reduced Support Queries by 40%</h3>
+          <p class="project-desc">Redesigned the navigation for an audio-visual tech brand during my internship at Zensite (Singapore) — simplifying a confusing menu structure that was driving high drop-off rates and support queries.</p>
+          <div class="project-action">
+            <a class="text-link" href="case-study-internship.html">Read the case study</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <h3 class="work-subhead" id="vibe-title">Vibe Coding Solution</h3>
+    <div class="gallery" role="region" aria-labelledby="vibe-title">
+
       <article class="project">
         <div class="media locked">
           <span class="lock-badge" aria-hidden="true">
@@ -1458,21 +1498,6 @@
           <p class="project-desc">Turning paper forms into digital ones. This project is private, so the case study is password protected.</p>
           <div class="project-action">
             <button class="text-button" id="openLock" type="button" aria-haspopup="dialog">Unlock case study</button>
-          </div>
-        </div>
-      </article>
-
-      <article class="project project--link">
-        <div class="media">
-          <span class="media-label">Add an image</span>
-          <img src="images/internship.jpg" alt="Three app screens from the redesigned navigation, shown on phone mockups" loading="lazy" onerror="this.remove()">
-        </div>
-        <div class="project-body">
-          <p class="project-type">Internship</p>
-          <h3>Reduced Support Queries by 40%</h3>
-          <p class="project-desc">Redesigned the navigation for an audio-visual tech brand during my internship at Zensite (Singapore) — simplifying a confusing menu structure that was driving high drop-off rates and support queries.</p>
-          <div class="project-action">
-            <a class="text-link" href="case-study-internship.html">Read the case study</a>
           </div>
         </div>
       </article>
