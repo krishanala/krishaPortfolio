@@ -687,68 +687,13 @@
     transform: translateY(-2px);
   }
 
-  /* ---- my work (horizontal) ---- */
+  /* ---- my work ---- */
 
-  .work-head-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 1.9rem;
-  }
-
-  .work-head-row h2 {
-    margin-bottom: 0;
-  }
-
-  .carousel-controls {
-    display: flex;
-    gap: 0.6rem;
-    flex-shrink: 0;
-  }
-
-  .car-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 1px solid var(--ink-soft);
-    background: var(--card);
-    color: var(--ink);
-    font-size: 1.05rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .car-btn:hover:not(:disabled) {
-    background: var(--nook-1);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(var(--shadow-rgb), 0.15);
-  }
-
-  .car-btn:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
-
+  /* Cards share the row equally; they stack into one column on narrow screens. */
   .gallery {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
     gap: 1.1rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    /* run the cards edge to edge inside the panel, but line the first one up with the text */
-    padding: 0.6rem var(--pad-x) 1.8rem;
-    margin: -0.6rem calc(-1 * var(--pad-x)) -1.2rem;
-    scroll-padding-inline: var(--pad-x);
-    scrollbar-width: none;
-  }
-
-  .gallery::-webkit-scrollbar {
-    display: none;
   }
 
   /* Subheading for a group of projects, styled like the skill group headings. */
@@ -773,9 +718,6 @@
 
   .project {
     position: relative;
-    flex: 0 0 auto;
-    width: clamp(240px, 72vw, 290px);
-    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
     background: var(--card);
@@ -800,11 +742,13 @@
     transform: scale(1.04);
   }
 
-  .media.locked {
+  .media.locked,
+  .media.soon {
     background: linear-gradient(135deg, var(--nook-2), var(--nook-1));
   }
 
-  .lock-badge {
+  .lock-badge,
+  .soon-badge {
     width: 58px;
     height: 58px;
     border-radius: 50%;
@@ -1274,10 +1218,9 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; transition: none; }
     body { transition: none; }
-    .gallery { scroll-behavior: auto; }
     main > header, main > section { animation: none; }
     .portrait, .project, .media img, .shelf-item, .contact-list a,
-    .sidenav a, .tags li, .theme-toggle, .toggle-thumb, .car-btn,
+    .sidenav a, .tags li, .theme-toggle, .toggle-thumb,
     .skip-link, .btn, .nav-toggle span { transition: none; }
   }
 
@@ -1441,15 +1384,9 @@
   </section>
 
   <section class="glass" id="work" aria-labelledby="work-title">
-    <div class="work-head-row">
-      <h2 id="work-title">My Work</h2>
-      <div class="carousel-controls">
-        <button class="car-btn" id="prevBtn" type="button" aria-controls="projectTrack" aria-label="Show previous projects">&larr;</button>
-        <button class="car-btn" id="nextBtn" type="button" aria-controls="projectTrack" aria-label="Show next projects">&rarr;</button>
-      </div>
-    </div>
+    <h2 id="work-title">My Work</h2>
 
-    <div class="gallery" id="projectTrack" role="region" aria-label="Projects">
+    <div class="gallery">
 
       <article class="project project--link">
         <div class="media">
@@ -1484,7 +1421,7 @@
     </div>
 
     <h3 class="work-subhead" id="vibe-title">Vibe Coding Solution</h3>
-    <div class="gallery" role="region" aria-labelledby="vibe-title">
+    <div class="gallery">
 
       <article class="project">
         <div class="media locked">
@@ -1498,6 +1435,22 @@
           <p class="project-desc">Turning paper forms into digital ones. This project is private, so the case study is password protected.</p>
           <div class="project-action">
             <button class="text-button" id="openLock" type="button" aria-haspopup="dialog">Unlock case study</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="media soon">
+          <span class="soon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          </span>
+        </div>
+        <div class="project-body">
+          <p class="project-type">Coming soon</p>
+          <h3>Calendar Manager</h3>
+          <p class="project-desc">A tool I built to manage Google Calendar with ease and avoid as many mistakes as possible, using Google Apps Script as the bridge between the two.</p>
+          <div class="project-action">
+            <p class="project-note">Case study on the way</p>
           </div>
         </div>
       </article>
@@ -1637,28 +1590,6 @@
       navToggle.focus();
     }
   });
-
-  // ---- My Work carousel ----
-  const track = document.getElementById('projectTrack');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-
-  function step() {
-    const card = track.querySelector('.project');
-    const gap = parseFloat(getComputedStyle(track).columnGap) || 18;
-    return card ? card.getBoundingClientRect().width + gap : 300;
-  }
-
-  function updateButtons() {
-    prevBtn.disabled = track.scrollLeft <= 4;
-    nextBtn.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
-  }
-
-  prevBtn.addEventListener('click', () => track.scrollBy({ left: -step() }));
-  nextBtn.addEventListener('click', () => track.scrollBy({ left: step() }));
-  track.addEventListener('scroll', updateButtons, { passive: true });
-  window.addEventListener('resize', updateButtons);
-  updateButtons();
 
   // ---- Password-protected case study ----
   // The case study is encrypted (AES-GCM, key derived from the password with
