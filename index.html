@@ -59,9 +59,11 @@
 
   PASSWORD-PROTECTED CASE STUDY
   The "Digitizing forms" case study is encrypted inside
-  <script type="application/json" id="locked-forms">. The demo password is
-  changeme-krisha. Open lock-tool.html in your browser to write the real
-  case study, set your own password, and paste the result in its place.
+  <script type="application/json" id="locked-forms">. The password is not
+  written anywhere in this repo — keep it in your password manager, and
+  never add it to this file. The readable draft lives in private/, which
+  .gitignore keeps out of GitHub. To change the case study or password,
+  open lock-tool.html in your browser and paste the result in its place.
 -->
 
 <style>
@@ -958,6 +960,27 @@
     transform: translateX(4px);
   }
 
+  .social-icon {
+    display: inline-block;
+    width: 1.15em;
+    height: 1.15em;
+    margin-right: 0.45em;
+    vertical-align: -0.22em;
+    transition: fill 0.2s ease, color 0.2s ease;
+  }
+
+  /* On hover the icon fills in white. */
+  .contact-list a:hover .social-icon,
+  .contact-list a:focus-visible .social-icon {
+    fill: #ffffff;
+  }
+
+  /* In dark mode the lines turn dark so the white icon keeps its details. */
+  :root[data-theme="dark"] .contact-list a:hover .social-icon,
+  :root[data-theme="dark"] .contact-list a:focus-visible .social-icon {
+    color: var(--paper);
+  }
+
   footer {
     margin-top: 2rem;
     text-align: center;
@@ -1219,7 +1242,7 @@
     html { scroll-behavior: auto; transition: none; }
     body { transition: none; }
     main > header, main > section { animation: none; }
-    .portrait, .project, .media img, .shelf-item, .contact-list a,
+    .portrait, .project, .media img, .shelf-item, .contact-list a, .social-icon,
     .sidenav a, .tags li, .theme-toggle, .toggle-thumb,
     .skip-link, .btn, .nav-toggle span { transition: none; }
   }
@@ -1485,9 +1508,9 @@
   <section class="glass" id="contact" aria-labelledby="contact-title">
     <h2 id="contact-title">Get in touch</h2>
     <ul class="contact-list">
-      <li><a href="mailto:krishanalathamby@gmail.com">krishanalathamby@gmail.com</a></li>
-      <li><a href="tel:+601156499629">+60 11-5649 9629</a></li>
-      <li><a href="https://www.instagram.com/rkshaialan/" target="_blank" rel="noopener">@rkshaialan on Instagram<span class="sr-only"> (opens in a new tab)</span></a></li>
+      <li><a href="mailto:krishanalathamby@gmail.com"><svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 7.2 8.2 6 8.2-6"/></svg>krishanalathamby@gmail.com</a></li>
+      <li><a href="tel:+601156499629"><svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+60 11-5649 9629</a></li>
+      <li><a href="https://www.instagram.com/rkshaialan/" target="_blank" rel="noopener"><svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="0.5" fill="currentColor"/></svg>@rkshaialan<span class="sr-only"> on Instagram (opens in a new tab)</span></a></li>
     </ul>
   </section>
 
@@ -1521,7 +1544,7 @@
 </dialog>
 
 <!-- Encrypted case study. Replace the contents using lock-tool.html. -->
-<script type="application/json" id="locked-forms">{"v":1,"iter":250000,"salt":"ew4yG5naGuAnE9ghQgu0uQ==","iv":"qCzuLgyE88oTA/9A","data":"XPmseMnFfHB1R+eZ6KfvKrrJV/2aIxLAnFUUa9AoMA4onpgd8yNL5qwQQRuhfj4FoFPsBKK9I8yOj5x7B0IXDsYG6S4PpiJ8htBuVS9XdBiu56BoQQazlDehc5fHY4MSFcIWcGZHbNfEUCZ9peS65VNgIZEZRBjY/cLJwFW++md1iexRVWkvKH4iePlm2ee8N8dKdtw/yGljotuFtfWaYn7skF2OnRuKE8lWHFG//PUnkzeax+OdojuiTJVlCT37FdPeLDKKGLNSutLk1bH/7D1I3Ta+Hm6U/cf4X5e3ReZZM686MRmYt3AnOBityOb36geJvBDrHzA9CwMy8W809Tyazz7hpMWlZcoudNenABlOKWHnN3hcCJ27I5RxeD2ROa5m+3XIjSJw0uZAfQt7q57jxLrfuLtPKOsI1O3kuf//aum78EnvuwYCgL2vAIm8d2sK6rPLBDWo9M1l/WlbFvomubPLiN63iEL0+Hp4Csbpnc1Pu4TPAKU4S7paiO93h9GbrVjawUhdr24OgULeh6eJS0LveNBxIffLgLtG7BeiVZIrjQDBtcKTlluYp2Ckjy379rkqC4veYQtVw0PQtaeJJ2nZqsuGMCOfwv7/Z+cbvGNWLKqmZd5z"}</script>
+<script type="application/json" id="locked-forms">{"v":1,"iter":600000,"salt":"rpC+KOev/JcU5MQBzMcVGw==","iv":"QfN0MbC3nsjqUOEa","data":"ni90GoXuDw6/5QyfqvBeJH15MRcBehuGMfbJ1RGWhDgl1Qkeiq+bnU3LexwFiy6PXJYKQGi76jtUeHsSG1ZG+myuplU5OG4jy3R3cHrjUmudcSMII9gzoeTa1eZv3oeCmlObecG14h2mTp8urg+WmoC9btARQxpxK3eqKos6CEJu93mbS0LQMW3S+U7VIjcf9/0G0c8Jka0i5zTwrjPYjCFQzY3LlJ2dOGpkZpTSNHsB2oT29tEkTnZqrBHRojEfYA1tKqw5D/bbkn7UlF3GRRd8zIVerfHAF01QTrPo2c1yurjs3NTbIlokOvJQN3hHBsInffgafcy+o3oTrsVdpVBVec5wh272EBb44eX4lPVqEqVU7R7ySpZjpt3nqBVXSpUoaf63E4xb0/KeP2sASXjNtqfU6EY3ESQJy4fXTJXz2usX2wBIOZ5i6jXKm4NFwZBFkrabLRzxnFXKosjvlF7BbwKBpUrAsRMj7mcF0dL/drUny5C3kYIrZ1GIO2wIZcQKv+v6KdwjbZKDH2xBxZJFkG6uDL2ojPA3N0h2IThghDXXVhVCqY6hCcSxif0uIHw8E9bqT0WZ6pWJIZxyRTJioGFJmTUaOGcEp3ixUNvW5cdnC9nmvtQq"}</script>
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
