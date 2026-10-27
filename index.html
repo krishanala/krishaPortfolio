@@ -43,6 +43,10 @@
   TEXT
   - Experience: edit each <div class="entry"> inside <section id="experience">.
   - Skills: edit the tags inside <section id="skills">.
+  - Playground: one <article class="project"> per fun project, inside
+    <section id="playground">. Give each game or toy its own folder (for
+    example playground/my-game/index.html) and link the card to it the
+    same way the internship card links to its case study.
   - Reading & watching: edit each <article class="shelf-item">. To change a
     progress bar, change the width percentage on its <span>.
   - Contact: krishanalathamby@gmail.com is already filled in (it appears
@@ -691,10 +695,11 @@
 
   /* ---- my work ---- */
 
-  /* Cards share the row equally; they stack into one column on narrow screens. */
+  /* Two equal columns; they stack into one on narrow screens. A lone card
+     keeps its column width instead of stretching across the row. */
   .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
     gap: 1.1rem;
   }
 
@@ -1268,6 +1273,7 @@
     <a href="#experience">Experience</a>
     <a href="#skills">Skills</a>
     <a href="#work">My Work</a>
+    <a href="#playground">Playground</a>
     <a href="#shelf">Reading &amp; watching</a>
     <a href="#contact">Contact</a>
   </div>
@@ -1474,6 +1480,31 @@
           <p class="project-desc">A tool I built to manage Google Calendar with ease and avoid as many mistakes as possible, using Google Apps Script as the bridge between the two.</p>
           <div class="project-action">
             <p class="project-note">Case study on the way</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="glass" id="playground" aria-labelledby="playground-title">
+    <h2 id="playground-title">Playground</h2>
+    <p class="section-intro">Fun little things I've vibe coded, just for the joy of it.</p>
+
+    <div class="gallery">
+
+      <article class="project">
+        <div class="media soon">
+          <span class="soon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.32 5H6.68a4 4 0 0 0-3.98 3.59C2.6 9.42 2 14.46 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.41-1.41A2 2 0 0 1 9.83 16h4.34a2 2 0 0 1 1.41.59L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.54-.6-6.58-.69-7.26A4 4 0 0 0 17.32 5z"/></svg>
+          </span>
+        </div>
+        <div class="project-body">
+          <p class="project-type">Game</p>
+          <h3>Game coming soon</h3>
+          <p class="project-desc">A little game I vibe coded. It's getting its finishing touches, so check back soon to play it right here.</p>
+          <div class="project-action">
+            <p class="project-note">Coming soon</p>
           </div>
         </div>
       </article>
